@@ -1,16 +1,16 @@
-import { IsNotEmpty, MaxLength, Length } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 
 export class UserViewModel {
 
     @IsNotEmpty()
     @Length(3, 10)
-    readonly userLogin: string;
+    userLogin: string;
 
     @IsNotEmpty()
     @Length(3, 10)
-    readonly userName: string;
+    userName: string;
 
     @IsNotEmpty()
     @Length(3, 10)
-    readonly password: string;
+    password: string;
 }

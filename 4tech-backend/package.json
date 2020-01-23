@@ -1,8 +1,8 @@
 {
   "name": "4tech-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "4tech app",
+  "author": "José Eduardo dos Santos",
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
