@@ -24,16 +24,20 @@ export class UserService {
         return this.userRepository.createUser(newUser);
     }
 
-    createSeveralUsers(newUsers: UserViewModel[]){
+    createSeveralUsers(newUsers: UserViewModel[]) {
+
         const userList = this.userRepository.getUsers();
-        const existingUser = userList.find( (el, i) => el.userName === newUsers[i].userName)
+
+        const existingUser = userList.find((el, i) => el.userName === newUsers[i].userName && el.userLogin === newUsers[i].userLogin && el.password === newUsers[i].password)
+        console.log(existingUser)
+
         if (existingUser) {
             throw new BadRequestException('This username already exists!');
         }
         return this.userRepository.createSeveralUsers(newUsers);
     }
 
-    deleteUser(deleteUser: any) {
+    deleteUser(deleteUser: UserViewModel) {
         const userList = this.userRepository.getUsers();
         const existingUserIndex = userList.findIndex((el) => el.userLogin === deleteUser.userLogin && el.password === deleteUser.password)
         if (existingUserIndex === -1) {
@@ -60,6 +64,6 @@ export class UserService {
         const userList = this.userRepository.getUsers();
         const foundLogin = userList.find(x => x.userLogin === login.userLogin && x.password === login.password);
 
-        return foundLogin
+        return foundLogin;
     }
 }

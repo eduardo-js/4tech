@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UserViewModel } from 'src/domain/user.viewmodel';
-import { UserUpdateViewModel } from 'src/domain/user.updateviewmodel';
 
 @Injectable()
 export class UserRepository {
 
-    db: UserViewModel[] = [];
+    db: UserViewModel[] = [
+        new UserViewModel('user1', 'user1', 'user1'),
+    ];
 
     getUsers() {
         return this.db;
@@ -18,11 +19,10 @@ export class UserRepository {
 
     createSeveralUsers(newUsers: UserViewModel[]) {
         this.db.push(...newUsers);
-        console.log(this.db)
         return 'User successfully added';
     }
 
-    deleteUser(deleteUserIndex: any) {
+    deleteUser(deleteUserIndex: number) {
         this.db.splice(deleteUserIndex, 1);
         return 'User successfully removed';
     }

@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Put, UseGuards } from '@nestjs/common';
 import { UserService } from 'src/services/user/user.service';
 import { UserViewModel } from 'src/domain/user.viewmodel';
-import { UserDeleteViewModel } from 'src/domain/user.deleteviewmodel';
 import { UserUpdateViewModel } from 'src/domain/user.updateviewmodel';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -11,6 +11,7 @@ export class UserController {
 
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get()
     getUsers() {
         return this.userService.getUsers();
@@ -27,7 +28,7 @@ export class UserController {
     }
 
     @Delete()
-    deleteUser(@Body() deleteUser: UserDeleteViewModel) {
+    deleteUser(@Body() deleteUser: UserViewModel) {
         return this.userService.deleteUser(deleteUser);
     }
 
