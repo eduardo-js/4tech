@@ -8,14 +8,15 @@ export class AuthService {
     constructor(private userService: UserService, private jwtService: JwtService) {
     }
 
-    login(login: LoginViewModel) {
-        const user = this.userService.attemptLogin(login);
+   async login(login: LoginViewModel) {
+        const user = await this.userService.attemptLogin(login);
 
         if (!user) {
             throw new BadRequestException('Login or password incorrect!');
         }
         return {
             acess_token: this.jwtService.sign( {status: 'Authorized'}),
+            userId: user._id,
         };
     }
 }

@@ -22,18 +22,18 @@ export class UserController {
         return this.userService.createNewUser(newUser);
     }
 
-    @Post('Many')
-    createSeveralUsers(@Body() newUsers: UserViewModel[]) {
-        return this.userService.createSeveralUsers(newUsers);
-    }
+    // @Post('many')
+    // createSeveralUsers(@Body() newUsers: UserViewModel[]) {
+    //     return this.userService.createSeveralUsers(newUsers);
+    // }
 
     @Delete()
     deleteUser(@Body() deleteUser: UserViewModel) {
         return this.userService.deleteUser(deleteUser);
     }
 
-    @Put()
-    updateUser(@Body() updateUser: UserUpdateViewModel) {
-        return this.userService.updateUser(updateUser);
-    }
+    // @Put()
+    // updateUser(@Body() updateUser: UserUpdateViewModel) {
+    //     return this.userService.updateUser(updateUser);
+    // }
 }

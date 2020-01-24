@@ -1,41 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { UserViewModel } from 'src/domain/user.viewmodel';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from 'src/domain/schemas/user.schema';
 
 @Injectable()
 export class UserRepository {
+    constructor(@InjectModel('User') private readonly userCollection: Model<User>) {
 
-    db: UserViewModel[] = [
-        new UserViewModel('user1', 'user1', 'user1'),
-    ];
-
-    getUsers() {
-        return this.db;
     }
 
-    createUser(newUser: UserViewModel) {
-        this.db.push(newUser);
-        return 'User successfully added';
+    async getUsers(): Promise<User[]> {
+        return await this.userCollection.find().lean()  
     }
 
-    createSeveralUsers(newUsers: UserViewModel[]) {
-        this.db.push(...newUsers);
-        return 'User successfully added';
+    async createUser(newUser: UserViewModel) {
+        const createUser = this.userCollection(newUser);
+        return await createUser.save();
     }
 
-    deleteUser(deleteUserIndex: number) {
-        this.db.splice(deleteUserIndex, 1);
-        return 'User successfully removed';
+    // async createSeveralUsers(newUsers: UserViewModel[]) {
+    //     this.db.push(...newUsers);
+    //     return await 'User successfully added';
+    // }
+
+    async deleteUser(deleteUserByLogin: UserViewModel) {
+        await this.userCollection.remove({ userLogin: deleteUserByLogin.userLogin })
+        return  'User successfully removed';
     }
 
-    updateUser(updateUser: any) {
-        const updateUserIndex = updateUser.id;
+    // async updateUser(updateUser: any) {
+    //     const updateUserIndex = updateUser.id;
 
-        if (updateUser.updateInfo.password) {
-            this.db[updateUserIndex].password = updateUser.updateInfo.password;
-        }
-        if (updateUser.updateInfo.userName) {
-            this.db[updateUserIndex].userName = updateUser.updateInfo.userName;
-        }
-        return 'User successfully updated';
-    }
+    //     if (updateUser.updateInfo.password) {
+    //         this.db[updateUserIndex].password = updateUser.updateInfo.password;
+    //     }
+    //     if (updateUser.updateInfo.userName) {
+    //         this.db[updateUserIndex].userName = updateUser.updateInfo.userName;
+    //     }
+    //     return await 'User successfully updated';
+    // }
 }

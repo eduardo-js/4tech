@@ -14,9 +14,9 @@ export class UserService {
         return this.userRepository.getUsers();
     }
 
-    createNewUser(newUser: UserViewModel) {
+    async createNewUser(newUser: UserViewModel) {
 
-        const userList = this.userRepository.getUsers();
+        const userList = await this.userRepository.getUsers();
         const existingUser = userList.find(el => el.userName === newUser.userName)
         if (existingUser) {
             throw new BadRequestException('This username already exists!');
@@ -24,44 +24,44 @@ export class UserService {
         return this.userRepository.createUser(newUser);
     }
 
-    createSeveralUsers(newUsers: UserViewModel[]) {
+    // async createSeveralUsers(newUsers: UserViewModel[]) {
 
-        const userList = this.userRepository.getUsers();
+    //     const userList = await this.userRepository.getUsers();
 
-        const existingUser = userList.find((el, i) => el.userName === newUsers[i].userName && el.userLogin === newUsers[i].userLogin && el.password === newUsers[i].password)
-        console.log(existingUser)
+    //     const existingUser = userList.find((el, i) => el.userName === newUsers[i].userName && el.userLogin === newUsers[i].userLogin && el.password === newUsers[i].password)
+    //     console.log(existingUser)
 
-        if (existingUser) {
-            throw new BadRequestException('This username already exists!');
-        }
-        return this.userRepository.createSeveralUsers(newUsers);
-    }
+    //     if (existingUser) {
+    //         throw new BadRequestException('This username already exists!');
+    //     }
+    //     return this.userRepository.createSeveralUsers(newUsers);
+    // }
 
-    deleteUser(deleteUser: UserViewModel) {
-        const userList = this.userRepository.getUsers();
-        const existingUserIndex = userList.findIndex((el) => el.userLogin === deleteUser.userLogin && el.password === deleteUser.password)
-        if (existingUserIndex === -1) {
+    async deleteUser(deleteUser: UserViewModel) {
+        const userList = await this.userRepository.getUsers();
+        const existingUserLogin = userList.find((el) => el.userLogin === deleteUser.userLogin && el.password === deleteUser.password)
+        if (existingUserLogin === undefined) {
             throw new BadRequestException('This username or password does not exist!');
         }
-        return this.userRepository.deleteUser(existingUserIndex);
+        return this.userRepository.deleteUser(existingUserLogin);
     }
 
-    updateUser(updateUser: UserUpdateViewModel) {
-        const userList = this.userRepository.getUsers();
-        const existingUserIndex = userList.findIndex(el => el.userLogin === updateUser.userLogin);
+    // async updateUser(updateUser: UserUpdateViewModel) {
+    //     const userList = await this.userRepository.getUsers();
+    //     const existingUserIndex = userList.findIndex(el => el.userLogin === updateUser.userLogin);
 
-        if (existingUserIndex === -1) {
-            throw new BadRequestException('This user login does not exist!');
-        }
-        const info = {
-            id: existingUserIndex,
-            updateInfo: updateUser
-        }
-        return this.userRepository.updateUser(info);
-    }
+    //     if (existingUserIndex === -1) {
+    //         throw new BadRequestException('This user login does not exist!');
+    //     }
+    //     const info = {
+    //         id: existingUserIndex,
+    //         updateInfo: updateUser
+    //     }
+    //     return this.userRepository.updateUser(info);
+    // }
 
-    attemptLogin(login: LoginViewModel) {
-        const userList = this.userRepository.getUsers();
+    async attemptLogin(login: LoginViewModel) {
+        const userList = await this.userRepository.getUsers();
         const foundLogin = userList.find(x => x.userLogin === login.userLogin && x.password === login.password);
 
         return foundLogin;
