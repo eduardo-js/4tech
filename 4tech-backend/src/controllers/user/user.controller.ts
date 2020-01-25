@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Put, UseGuards, Query, Param } from '@nestjs/common';
 import { UserService } from 'src/services/user/user.service';
 import { UserViewModel } from 'src/domain/user.viewmodel';
-import { UserUpdateViewModel } from 'src/domain/user.updateviewmodel';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
@@ -17,23 +16,28 @@ export class UserController {
         return this.userService.getUsers();
     }
 
+    @Get(':id')
+    getUserById(@Param('id') id: string){
+    return this.userService.getUserById(id);
+    }
+
     @Post()
     createUser(@Body() newUser: UserViewModel) {
         return this.userService.createNewUser(newUser);
     }
 
-    // @Post('many')
-    // createSeveralUsers(@Body() newUsers: UserViewModel[]) {
-    //     return this.userService.createSeveralUsers(newUsers);
-    // }
+    @Post('many')
+    createSeveralUsers(@Body() newUsers: UserViewModel[]) {
+        return this.userService.createSeveralUsers(newUsers);
+    }
 
     @Delete()
     deleteUser(@Body() deleteUser: UserViewModel) {
         return this.userService.deleteUser(deleteUser);
     }
 
-    // @Put()
-    // updateUser(@Body() updateUser: UserUpdateViewModel) {
-    //     return this.userService.updateUser(updateUser);
-    // }
+    @Put()
+    updateUser(@Body() updateUser: UserViewModel) {
+        return this.userService.updateUser(updateUser);
+    }
 }

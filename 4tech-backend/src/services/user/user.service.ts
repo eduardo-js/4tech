@@ -2,7 +2,6 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { UserRepository } from 'src/repositories/user-repository/user-repository';
 import { UserViewModel } from 'src/domain/user.viewmodel';
 import { LoginViewModel } from 'src/domain/login.viewmodel';
-import { UserUpdateViewModel } from 'src/domain/user.updateviewmodel';
 
 @Injectable()
 export class UserService {
@@ -10,10 +9,13 @@ export class UserService {
 
     }
 
-    getUsers() {
-        return this.userRepository.getUsers();
+    async  getUsers() {
+        return await this.userRepository.getUsers();
     }
 
+    async getUserById(id: string){
+        return await this.userRepository.getUserById(id);
+    }
     async createNewUser(newUser: UserViewModel) {
 
         const userList = await this.userRepository.getUsers();
@@ -24,18 +26,18 @@ export class UserService {
         return this.userRepository.createUser(newUser);
     }
 
-    // async createSeveralUsers(newUsers: UserViewModel[]) {
+    async createSeveralUsers(newUsers: UserViewModel[]) {
 
-    //     const userList = await this.userRepository.getUsers();
+        const userList = await this.userRepository.getUsers();
 
-    //     const existingUser = userList.find((el, i) => el.userName === newUsers[i].userName && el.userLogin === newUsers[i].userLogin && el.password === newUsers[i].password)
-    //     console.log(existingUser)
+        const existingUser = userList.find((el, i) => el.userName === newUsers[i].userName && el.userLogin === newUsers[i].userLogin && el.password === newUsers[i].password)
+        console.log(existingUser)
 
-    //     if (existingUser) {
-    //         throw new BadRequestException('This username already exists!');
-    //     }
-    //     return this.userRepository.createSeveralUsers(newUsers);
-    // }
+        if (existingUser) {
+            throw new BadRequestException('This username already exists!');
+        }
+        return this.userRepository.createSeveralUsers(newUsers);
+    }
 
     async deleteUser(deleteUser: UserViewModel) {
         const userList = await this.userRepository.getUsers();
@@ -46,19 +48,15 @@ export class UserService {
         return this.userRepository.deleteUser(existingUserLogin);
     }
 
-    // async updateUser(updateUser: UserUpdateViewModel) {
-    //     const userList = await this.userRepository.getUsers();
-    //     const existingUserIndex = userList.findIndex(el => el.userLogin === updateUser.userLogin);
+    async updateUser(updateUser: UserViewModel) {
+        const userList = await this.userRepository.getUsers();
+        const existingUserIndex = userList.findIndex(el => el.userLogin === updateUser.userLogin);
+        if (existingUserIndex === -1) {
+            throw new BadRequestException('This user login does not exist!');
+        }
 
-    //     if (existingUserIndex === -1) {
-    //         throw new BadRequestException('This user login does not exist!');
-    //     }
-    //     const info = {
-    //         id: existingUserIndex,
-    //         updateInfo: updateUser
-    //     }
-    //     return this.userRepository.updateUser(info);
-    // }
+        return this.userRepository.updateUser(updateUser);
+    }
 
     async attemptLogin(login: LoginViewModel) {
         const userList = await this.userRepository.getUsers();

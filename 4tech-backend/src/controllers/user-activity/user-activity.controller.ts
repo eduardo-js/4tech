@@ -1,8 +1,10 @@
-import { Controller, UseGuards, Post, UseInterceptors, UploadedFile, Body } from '@nestjs/common';
+import { Controller, UseGuards, Post, UseInterceptors, UploadedFile, Body, Get, Param, Put } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserActivityService } from 'src/services/user-activity/user-activity.service';
+import { LikeOrDislikeViewModel } from 'src/domain/like-or-dislike.viewmodel';
+import { UserActivityCommentDto } from 'src/domain/dto/user-activity-comment.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user-activity')
@@ -11,11 +13,18 @@ export class UserActivityController {
 
     }
 
+    @Get(':index')
+    getRecentImages(
+        @Param('index') index: string) {
+        return this.userActivityService.getRecentImages(index);
+    }
+
     @Post('upload')
     @UseInterceptors(
         FileInterceptor('image', {
             storage: diskStorage({
-                destination: '../images/'
+                destination: '../images/',
+                filename: (req, file, callback) => { callback(null, file.originalname); },
             })
         })
     )
@@ -25,7 +34,17 @@ export class UserActivityController {
         @Body('userId') userId: string,
         @Body('description') description: string,
     ) {
-        return this.userActivityService.uploadImage(userId, file.filename, description);
+        return this.userActivityService.uploadImage(userId, file.originalname, description);
+    }
+    
+    @Put('like-or-dislike')
+    likeOrDislikeUserActivity(@Body() likeOrDislikeViewModel: LikeOrDislikeViewModel){
+        return this.userActivityService.likeOrDislikeUserActivity(likeOrDislikeViewModel);
+    }
+
+    @Put('user-comment')
+    userActivityComment(@Body() userComment: UserActivityCommentDto){
+        return 'hi';
     }
 
 }

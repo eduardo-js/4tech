@@ -7,11 +7,20 @@ import { User } from 'src/domain/schemas/user.schema';
 @Injectable()
 export class UserRepository {
     constructor(@InjectModel('User') private readonly userCollection: Model<User>) {
+    }
 
+
+    async getUserById(id: string): Promise<User> {
+        return await this.userCollection.findOne({ _id: id }).lean()
     }
 
     async getUsers(): Promise<User[]> {
-        return await this.userCollection.find().lean()  
+        return await this.userCollection.find().select( { __v: false, password: false } ).lean()
+    }
+
+    async getByCredentials(userLoginFromViewModel: string, passwordFromViewModel: string){
+        return await this.userCollection.findOne({userLogin: userLoginFromViewModel, password: passwordFromViewModel}).lean();
+
     }
 
     async createUser(newUser: UserViewModel) {
@@ -19,25 +28,19 @@ export class UserRepository {
         return await createUser.save();
     }
 
-    // async createSeveralUsers(newUsers: UserViewModel[]) {
-    //     this.db.push(...newUsers);
-    //     return await 'User successfully added';
-    // }
+    async createSeveralUsers(newUsers: UserViewModel[]) {
+        await newUsers.forEach(el => { this.createUser(el) });
+        return 'Users successfully added';
+    }
 
     async deleteUser(deleteUserByLogin: UserViewModel) {
         await this.userCollection.remove({ userLogin: deleteUserByLogin.userLogin })
-        return  'User successfully removed';
+        return 'User successfully removed';
     }
 
-    // async updateUser(updateUser: any) {
-    //     const updateUserIndex = updateUser.id;
-
-    //     if (updateUser.updateInfo.password) {
-    //         this.db[updateUserIndex].password = updateUser.updateInfo.password;
-    //     }
-    //     if (updateUser.updateInfo.userName) {
-    //         this.db[updateUserIndex].userName = updateUser.updateInfo.userName;
-    //     }
-    //     return await 'User successfully updated';
-    // }
+    async updateUser(updateUserInfo: UserViewModel) {
+        await this.userCollection.updateOne(
+            { userLogin: updateUserInfo.userLogin }, updateUserInfo)
+        return 'User successfully updated';
+    }
 }
