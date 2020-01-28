@@ -8,13 +8,14 @@ import {
   Route,
   Redirect
 } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 function App() {
   return (
     <Router>
       <Switch>
         <Route exact path="/" component={Login} />
-        <Route exact path="/timeline" component={Timeline} />
+        <PrivateRoute exact path="/timeline" component={Timeline} />
         <Redirect to="/"/>
       </Switch>
     </Router>
